@@ -28,9 +28,11 @@ export function ConversationsList() {
                 image={character.image}
                 className="relative h-12 w-12 shrink-0"
               />
-              <div>
-                <h2 className="font-medium">{character.name}</h2>
-                <p className="text-sm text-gray-500">{character.subtitle}</p>
+              <div className="min-w-0 flex-1">
+                <h2 className="font-medium truncate">{character.name}</h2>
+                <p className="text-sm text-gray-500 truncate">
+                  {character.subtitle}
+                </p>
               </div>
             </Link>
           )

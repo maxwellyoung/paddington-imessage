@@ -10,7 +10,6 @@ export function GroupAvatar({
   image?: string;
   className?: string;
 }) {
-  // Get initials from the group name
   const initials = name
     .split(" ")
     .map((word) => word[0])
@@ -19,8 +18,8 @@ export function GroupAvatar({
     .slice(0, 2);
 
   return (
-    <Avatar className={cn("", className)}>
-      <AvatarImage src={image} alt={name} />
+    <Avatar className={cn("aspect-square", className)}>
+      <AvatarImage src={image} alt={name} className="object-cover" />
       <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
         {initials}
       </AvatarFallback>

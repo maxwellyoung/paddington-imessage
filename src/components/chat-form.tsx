@@ -9,6 +9,7 @@ import {
   Camera,
   ChevronLeft,
   ArrowRightCircle,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AutoResizeTextarea } from "@/components/autoresize-textarea";
@@ -128,12 +129,37 @@ export function ChatForm({
   const params = useParams();
   const selectedCharacter =
     characters.find((c) => c.id === params.character) || characters[0];
-  const { messages, input, setInput, append } = useChat({
+
+  // Load initial messages from localStorage
+  const loadMessages = () => {
+    const stored = localStorage.getItem(`chat-${selectedCharacter.id}`);
+    return stored ? JSON.parse(stored) : [];
+  };
+
+  const { messages, input, setInput, append, setMessages } = useChat({
     api: "/api/chat",
     body: {
       character: selectedCharacter.id,
     },
+    initialMessages: loadMessages(),
   });
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem(
+        `chat-${selectedCharacter.id}`,
+        JSON.stringify(messages)
+      );
+    }
+  }, [messages, selectedCharacter.id]);
+
+  // Add a clear chat function
+  const clearChat = () => {
+    localStorage.removeItem(`chat-${selectedCharacter.id}`);
+    setMessages([]);
+  };
+
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -189,25 +215,34 @@ export function ChatForm({
           <GroupAvatar
             name={selectedCharacter.name}
             image={selectedCharacter.image}
-            className="h-8 w-8"
+            className="h-8 w-8 shrink-0"
           />
           <div>
-            <h1 className="text-base font-semibold">
+            <h1 className="text-[17px] font-semibold">
               {selectedCharacter.name}
             </h1>
-            <p className="text-xs text-blue-500">iMessage</p>
+            <p className="text-xs text-[#007AFF]">iMessage</p>
           </div>
         </div>
       </div>
       <div className="flex gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Clear chat"
+          onClick={clearChat}
+          className="text-red-500 hover:text-red-600"
+        >
+          <Trash2 className="h-5 w-5" />
+        </Button>
         <Button variant="ghost" size="icon" aria-label="Video call">
-          <Camera className="h-6 w-6 text-blue-500" />
+          <Camera className="h-5 w-5 text-[#007AFF]" />
         </Button>
         <Button variant="ghost" size="icon" aria-label="Audio call">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="h-6 w-6 text-blue-500"
+            className="h-5 w-5 text-[#007AFF]"
           >
             <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
           </svg>
