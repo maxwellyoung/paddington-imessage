@@ -196,7 +196,7 @@ export function ChatForm({
       setIsTyping(false);
       append({
         role: "assistant",
-        content: "...",
+        content: "...", // Always show typing indicator
       });
     }, Math.random() * 1000 + 1000);
   };
