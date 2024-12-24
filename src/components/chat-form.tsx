@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ArrowRightCircle,
   Trash2,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AutoResizeTextarea } from "@/components/autoresize-textarea";
@@ -141,12 +142,24 @@ export function ChatForm({
     }
   }, [selectedCharacter.id]);
 
-  const { messages, input, setInput, append, setMessages } = useChat({
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    messages,
+    input,
+    setInput,
+    append,
+    setMessages,
+    error: chatError,
+  } = useChat({
     api: "/api/chat",
     body: {
       character: selectedCharacter.id,
     },
     initialMessages,
+    onError: (error) => {
+      setError(error.message);
+    },
   });
 
   // Save messages to localStorage
@@ -335,6 +348,19 @@ export function ChatForm({
     </motion.div>
   );
 
+  const errorAlert = error && (
+    <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50">
+      <div className="bg-red-50 dark:bg-red-900/50 text-red-800 dark:text-red-200 px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm">
+        <AlertCircle className="h-4 w-4" />
+        <span>
+          {error === "OpenAI API key not configured"
+            ? "API key missing. Please check configuration."
+            : "Failed to send message. Please try again."}
+        </span>
+      </div>
+    </div>
+  );
+
   return (
     <main
       className={cn(
@@ -349,6 +375,7 @@ export function ChatForm({
           {messages.length ? messageList : welcomeMessage}
         </AnimatePresence>
       </div>
+      {errorAlert}
       {messages.length > 0 && (
         <div className="flex justify-center">
           <motion.div
