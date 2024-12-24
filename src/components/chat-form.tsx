@@ -144,14 +144,7 @@ export function ChatForm({
 
   const [error, setError] = useState<string | null>(null);
 
-  const {
-    messages,
-    input,
-    setInput,
-    append,
-    setMessages,
-    error: chatError,
-  } = useChat({
+  const { messages, input, setInput, append, setMessages } = useChat({
     api: "/api/chat",
     body: {
       character: selectedCharacter.id,

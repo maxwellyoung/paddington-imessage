@@ -23,8 +23,10 @@ export async function POST(req: Request) {
     });
 
     return result.toDataStreamResponse();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Chat API Error:", error);
-    return new Response(`Error: ${error.message}`, { status: 500 });
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return new Response(`Error: ${errorMessage}`, { status: 500 });
   }
 }
