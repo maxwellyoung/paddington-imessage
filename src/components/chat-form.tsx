@@ -130,21 +130,26 @@ export function ChatForm({
   const selectedCharacter =
     characters.find((c) => c.id === params.character) || characters[0];
 
-  // Load initial messages from localStorage
-  const loadMessages = () => {
+  // Properly type the initial messages
+  const [initialMessages, setInitialMessages] = useState<Message[]>([]);
+
+  // Load messages from localStorage only on client side
+  useEffect(() => {
     const stored = localStorage.getItem(`chat-${selectedCharacter.id}`);
-    return stored ? JSON.parse(stored) : [];
-  };
+    if (stored) {
+      setInitialMessages(JSON.parse(stored) as Message[]);
+    }
+  }, [selectedCharacter.id]);
 
   const { messages, input, setInput, append, setMessages } = useChat({
     api: "/api/chat",
     body: {
       character: selectedCharacter.id,
     },
-    initialMessages: loadMessages(),
+    initialMessages,
   });
 
-  // Save messages to localStorage whenever they change
+  // Save messages to localStorage
   useEffect(() => {
     if (messages.length > 0) {
       localStorage.setItem(

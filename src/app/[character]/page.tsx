@@ -1,16 +1,25 @@
 import { ChatForm } from "@/components/chat-form";
 import { characters } from "@/lib/characters";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
-// Keep the full type for future reference but only use what we need
-type PageProps = {
-  params: {
-    character: string;
+interface PageProps {
+  params: Promise<{ character: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const character = characters.find((c) => c.id === resolvedParams.character);
+  return {
+    title: character ? character.name : "Chat",
   };
-};
+}
 
-export default function CharacterPage({ params }: PageProps) {
-  const character = characters.find((c) => c.id === params.character);
+export default async function CharacterPage({ params }: PageProps) {
+  const resolvedParams = await params;
+  const character = characters.find((c) => c.id === resolvedParams.character);
 
   if (!character || character.id === "divider") {
     notFound();
@@ -19,7 +28,6 @@ export default function CharacterPage({ params }: PageProps) {
   return <ChatForm />;
 }
 
-// Optional: Generate static paths for all characters
 export function generateStaticParams() {
   return characters
     .filter((character) => character.id !== "divider")
