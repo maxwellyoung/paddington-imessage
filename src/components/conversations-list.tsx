@@ -5,7 +5,7 @@ import { characters } from "@/lib/characters";
 export function ConversationsList() {
   return (
     <div className="mx-auto w-full max-w-lg">
-      <div className="sticky top-0 border-b bg-[#f2f2f7]/90 p-4 backdrop-blur-md dark:bg-black/90">
+      <div className="sticky top-0 z-10 border-b bg-[#f2f2f7]/90 p-4 backdrop-blur-md dark:bg-black/90">
         <h1 className="text-3xl font-bold">Messages</h1>
       </div>
       <div className="divide-y">
